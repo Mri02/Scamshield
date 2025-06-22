@@ -1,4 +1,4 @@
-# ✅ FINAL FIXED app.py — Handles Raw Message, Normalization Done Only in scam_detector
+
 
 from flask import Flask, render_template, request
 from scam_detector import detect_keywords, guess_scam_type, find_similar, check_contact_scam
@@ -50,4 +50,7 @@ def result():
     return "Invalid input."
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
+
