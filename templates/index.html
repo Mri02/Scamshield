@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ScamShield 🔐</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #0f172a;
+      font-family: 'Inter', sans-serif;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 40px 20px;
+      gap: 20px;
+    }
+
+    .side-scroll {
+      width: 20%;
+      max-height: 500px;
+      background: rgba(30, 41, 59, 0.9);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0,255,255,0.1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scrolling-list {
+      position: absolute;
+      top: 100%;
+      animation: scrollUp 25s linear infinite;
+    }
+
+    @keyframes scrollUp {
+      0% { top: 100%; }
+      100% { top: -100%; }
+    }
+
+    .center {
+      width: 60%;
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0,255,255,0.15);
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 34px;
+      font-weight: 700;
+      color: #3b82f6;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(59,130,246,0.6);
+    }
+
+    .toggle-buttons {
+      display: flex;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .toggle-buttons button {
+      flex: 1;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 15px;
+      border: none;
+      background: #334155;
+      color: #cbd5e1;
+      cursor: pointer;
+    }
+
+    .toggle-buttons button.active {
+      background: #3b82f6;
+      color: white;
+    }
+
+    form {
+      display: none;
+    }
+
+    form.active {
+      display: block;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      background: #475569;
+      color: #f8fafc;
+      margin-top: 15px;
+      font-size: 15px;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      margin-top: 25px;
+      background: #14b8a6;
+      color: white;
+      border: none;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .section-title {
+      font-size: 18px;
+      color: #93c5fd;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .side-scroll ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .side-scroll ul li {
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .side-scroll ul li a {
+      color: #38bdf8;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+  </style>
+  <script>
+    function switchForm(id) {
+      document.getElementById('messageForm').classList.remove('active');
+      document.getElementById('contactForm').classList.remove('active');
+      document.getElementById(id).classList.add('active');
+      document.getElementById('btnMessage').classList.remove('active');
+      document.getElementById('btnContact').classList.remove('active');
+      document.getElementById('btn' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('active');
+    }
+  </script>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Left: Awareness Links -->
+    <div class="side-scroll">
+      <div class="section-title">📂 Protect Yourself Online</div>
+      <ul>
+        <li><a href="https://static.cybercrime.gov.in/pdf/Job%20Fraud%20Brochure%20Final.pdf" target="_blank">Job Scam</a></li>
+        <li><a href="https://static.cybercrime.gov.in/pdf/Financial%20Fraud%20Brochures%20final.pdf" target="_blank">Financial Scam</a></li>
+        <li><a href="https://static.cybercrime.gov.in/pdf/Safe%20Use%20of%20social%20Media%20Platform%20Brochure%20final.pdf" target="_blank">Social Media Awareness</a></li>
+        <li><a href="https://www.cybercrime.gov.in/" target="_blank">Report on Cybercrime.gov.in</a></li>
+      </ul>
+    </div>
+
+    <!-- Center: Main App -->
+    <div class="center">
+      <h1>🛡️ ScamShield</h1>
+      <div class="toggle-buttons">
+        <button id="btnMessage" class="active" onclick="switchForm('messageForm')">💬 Check Message</button>
+        <button id="btnContact" onclick="switchForm('contactForm')">📞 Check Contact</button>
+      </div>
+
+      <form id="messageForm" class="active" method="POST" action="/result">
+        <input type="hidden" name="input_type" value="message" />
+        <textarea name="message" rows="5" placeholder="Paste suspicious message here..."></textarea>
+        <button type="submit">🚨 Scan Message</button>
+      </form>
+
+      <form id="contactForm" method="POST" action="/result">
+        <input type="hidden" name="input_type" value="contact" />
+        <input type="text" name="contact" placeholder="Enter phone number or email..." />
+        <button type="submit">🔍 Scan Contact</button>
+      </form>
+    </div>
+
+    <!-- Right: Cyber Safety Tips (Auto Scroll) -->
+    <div class="side-scroll">
+      <div class="section-title">🧠 Cyber Hygiene Habits</div>
+      <ul class="scrolling-list">
+        <li>Strong passwords are your first shield – make them long, unique, and tough to crack!</li>
+        <li>Think before you click – phishing scams love curious minds!</li>
+        <li>Two-factor authentication (2FA) – because one lock is never enough!</li>
+        <li>Verify job offers before applying</li>
+        <li>Update now or regret later – outdated software is a hacker’s playground!</li>
+        <li>Always report scams you see</li>
+        <li>Be cautious with unknown WhatsApp messages</li>
+        <li>Public Wi-Fi? Use a VPN – or risk exposing your private data!</li>
+        <li>Backup regularly – ransomware won’t scare you if your data is safe!</li>
+        <li>Oversharing online? You’re giving hackers a free roadmap to your life!</li>
+        <li>Unknown USB drives = digital landmines – don’t plug them in!</li>
+        <li>Social media privacy settings – your invisible armor against stalkers & scammers!</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

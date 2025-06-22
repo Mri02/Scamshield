@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ScamShield Result</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #22c55e;
+      --yellow: #facc15;
+      --red: #ef4444;
+      --bg: #0f172a;
+      --txt: #f1f5f9;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--txt);
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 50px auto;
+      padding: 40px;
+      background: rgba(30, 41, 59, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.08);
+    }
+
+    h2 {
+      margin: 0 0 20px;
+      text-align: center;
+      color: #60a5fa;
+      font-size: 28px;
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .safe { background: #15803d; color: #fff; }
+    .danger { background: #b91c1c; color: #fff; }
+
+    .section { margin-bottom: 25px; }
+    .section strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--yellow);
+      font-size: 16px;
+    }
+
+    /* Scam Risk Meter Bar */
+    .risk-bar {
+      position: relative;
+      width: 100%;
+      max-width: 460px;
+      height: 32px;
+      margin: 40px auto 10px;
+      border-radius: 6px;
+      display: flex;
+      overflow: visible;
+    }
+
+    .risk-bar .low { flex: 0 0 40%; background: var(--green); }
+    .risk-bar .moderate { flex: 0 0 30%; background: var(--yellow); }
+    .risk-bar .high { flex: 1; background: var(--red); }
+
+    .risk-arrow {
+      position: absolute;
+      top: 100%; /* below the bar */
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: none;
+      border-bottom: 20px solid white; /* ▼ arrow pointing downward */
+      margin-top: 4px;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.6));
+      transition: left 0.4s;
+      z-index: 10;
+    }
+
+    .risk-labels {
+      width: 100%;
+      max-width: 460px;
+      margin: 8px auto 0;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+
+    .meter-label {
+      text-align: center;
+      font-weight: 700;
+      font-size: 22px;
+      margin-top: 18px;
+    }
+
+    .footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .report-btn {
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      background: #3b82f6;
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+      transition: background 0.3s;
+    }
+
+    .report-btn:hover {
+      background: #2563eb;
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+    }
+
+    .retry-link {
+      color: #38bdf8;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    .news-section a {
+      display: block;
+      margin-bottom: 10px;
+      color: #a5f3fc;
+      font-weight: 500;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #f472b6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🧠 Scam Detection Result</h2>
+
+    <div class="alert {% if likelihood > 40 %}danger{% else %}safe{% endif %}">
+      {% if likelihood > 40 %}⚠️ Scam Detected — Be Careful!
+      {% else %}✅ You’re Safe! No Scam Detected.{% endif %}
+    </div>
+
+    {% if input_type == 'message' %}
+      <div class="section"><strong>Message:</strong><p>{{ message }}</p></div>
+      <div class="section"><strong>Detected Scam Type:</strong><p>{{ scam_type }}</p></div>
+    {% elif input_type == 'contact' %}
+      <div class="section"><strong>Suspicious Contact:</strong><p>{{ contact }}</p></div>
+      <div class="section"><strong>Detected Scam Type:</strong><p>{{ scam_type }}</p></div>
+    {% endif %}
+
+    <!-- Scam Risk Bar -->
+    <div class="section">
+      <strong>Scam Likelihood:</strong>
+      <div class="risk-bar">
+        <div class="low"></div>
+        <div class="moderate"></div>
+        <div class="high"></div>
+        <div class="risk-arrow" id="riskArrow"></div>
+      </div>
+      <div class="risk-labels">
+        <span>Low</span>
+        <span>Moderate</span>
+        <span>High</span>
+      </div>
+      <div class="meter-label"
+           style="color:{% if likelihood<=40 %}var(--green){% elif likelihood<=70 %}var(--yellow){% else %}var(--red){% endif %}">
+        {{ likelihood }}% Risk — {% if likelihood<=40 %}Low{% elif likelihood<=70 %}Moderate{% else %}High{% endif %}
+      </div>
+    </div>
+
+    <!-- News Section -->
+    <div class="section news-section">
+      <div class="section-title">📰 You Might Want To Know</div>
+      {% if scam_type == 'Job Scam' %}
+        <a href="https://the420.in/wake-up-call-how-a-fake-job-offer-cost-an-mba-graduate-%E2%82%B911-crore-in-indias-biggest-cyber-scam/" target="_blank">MBA Graduate loses ₹11 Cr in Fake Job Scam</a>
+        <a href="https://www.thehindu.com/news/national/telangana/businessman-loses-2845-lakh-in-task-based-online-job-scam/article68819556.ece" target="_blank">Businessman loses ₹28.45 lakh</a>
+        <a href="https://www.indiatoday.in/technology/news/story/27-year-old-man-loses-rs-57-lakh-in-part-time-job-scam-2655724-2024-12-26" target="_blank">₹5.7 lakh lost in part-time scam</a>
+      {% elif scam_type == 'Banking Scam' %}
+        <a href="https://timesofindia.indiatimes.com/technology/tech-news/scammers-hack-mobile-phone-of-himachal-pradesh-state-co-operative-banks-customer-to-withdraw-rs-11-55-crore/articleshow/121261051.cms" target="_blank">Hackers steal ₹11.55 Cr via mobile</a>
+        <a href="https://www.indiatoday.in/technology/news/story/chandigarh-man-loses-rs-9-lakh-while-applying-for-a-new-credit-what-is-this-new-scam-how-to-stay-safe-2681153-2025-02-17" target="_blank">₹9 lakh lost applying for credit</a>
+        <a href="https://www.india.com/business/another-bank-scam-of-rs-62100000000-who-is-subodh-kumar-goyal-mastermind-behind-scam-which-cause-heavy-loss-to-uco-bank-7835515/" target="_blank">₹621 Cr UCO Bank scam</a>
+      {% elif scam_type == 'UPI Scam' %}
+        <a href="https://www.thehindu.com/news/national/tamil-nadu/cyber-crime-wing-of-tamil-nadu-police-warns-of-new-upi-scam/article68955688.ece" target="_blank">TN Police warns of UPI scam</a>
+        <a href="https://www.indiatoday.in/business/story/5-common-upi-related-frauds-and-tips-to-prevent-them-2677463-2025-02-10" target="_blank">5 Common UPI Frauds</a>
+      {% else %}
+        <a href="https://www.cybercrime.gov.in/" target="_blank">Visit cybercrime.gov.in for more alerts</a>
+      {% endif %}
+    </div>
+
+    <div class="footer">
+      {% if likelihood > 40 %}
+        <a class="report-btn" target="_blank"
+           href="https://mail.google.com/mail/?view=cm&fs=1&to=shreyaaa00024@gmail.com&su=Scam Report - {{ scam_type }}&body=Suspicious {{ input_type }}:%0A%0A{{ message or contact }}%0A%0AType: {{ scam_type }}">
+          🚀 Report This Scam via Gmail
+        </a>
+      {% endif %}
+      <a class="retry-link" href="/">🔁 Check Another Message or Contact?</a>
+    </div>
+  </div>
+
+  <script>
+    const likelihood = {{ likelihood }};
+    const arrow = document.getElementById('riskArrow');
+    const pct = Math.max(0, Math.min(100, likelihood));
+    arrow.style.left = `calc(${pct}% - 12px)`;
+  </script>
+</body>
+</html>
